@@ -1,4 +1,4 @@
-# ![PosterGen](https://github.com/ange007/poster-gen/blob/master/icon.png) PosterGen - it`s library for generation poster
+# ![PosterGen](https://github.com/ange007/poster-gen/blob/master/icon.png) PosterGen - News and Articles poster generator.
 
 Use for:
 * Poster for your site or blog
