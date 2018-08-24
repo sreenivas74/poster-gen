@@ -1,11 +1,13 @@
-# ![PosterGen](https://github.com/ange007/poster-gen/blob/master/icon.png) PosterGen - News and Articles poster generator.
+# PosterGen - News and Articles poster generator
 
 Use for:
 * Poster for your site or blog
 * Poster for social network
 * Poster for your promo materials &#9787;
 
-# Example Image
+# Example Images
+![PosterGen](https://github.com/ange007/poster-gen/blob/master/icon.png) 
+
 ![PosterGen](https://github.com/ange007/poster-gen/blob/master/poster.png)
 
 # Example Code
