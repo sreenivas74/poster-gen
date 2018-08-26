@@ -1,16 +1,16 @@
-# PosterGen - News and Articles poster generator
+## PosterGen - News and Articles poster generator
 
 Use for:
 * Poster for your site or blog
 * Poster for social network
 * Poster for your promo materials &#9787;
 
-# Example Images
+## Example Images
 ![PosterGen](https://github.com/ange007/poster-gen/blob/master/icon.png) 
 
 ![PosterGen](https://github.com/ange007/poster-gen/blob/master/poster.png)
 
-# Example Code
+## Example Code
 ```php
 <?php
     require_once '../src/Options.php';
@@ -48,6 +48,9 @@ Use for:
         ->setFontStroke( 'black' )
         ->addText( 'http://news.com' );
           
-        // Poster output
-        echo $poster->saveToBase64Image( );
+    // Poster output
+    echo $poster->saveToBase64Image( );
 ```
+
+## License
+It is released under the [MIT License](LICENSE).
