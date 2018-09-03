@@ -41,7 +41,7 @@ trait Options
 
 	protected $objectList = [ ];
 
-	function __construct( array $options = [ ] )
+	function __construct( /*array*/ $options = [ ] )
 	{
 
 	}
@@ -50,7 +50,7 @@ trait Options
 	 * 
 	 */
 
-	function setSize( int $width = 300, int $sectionsHeight = 150 )
+	function setSize( /*int*/ $width = 300, /*int*/ $sectionsHeight = 150 )
 	{
 		$this->size = [ 
 			'width' => $width, 
@@ -60,7 +60,15 @@ trait Options
 		return $this;
 	}
 
-	function setFont( string $value )
+	function getSize( /*bool*/ $realSize = False )
+	{
+		return [ 
+			'width' => $this->size[ 'width' ] - ( $realSize ? 0 : $this->verticalPadding ), 
+			'height' => $this->size[ 'height' ] - ( $realSize ? 0 : $this->horizontalPadding ), 
+		];
+	}
+
+	function setFont( /*string*/ $value )
 	{
 		$fontFile = $value . ( empty( pathinfo( $value )[ 'extension' ] ) ? '.ttf' : '' );
 
@@ -76,21 +84,21 @@ trait Options
 		return $this;
 	}
 
-	function setFontColor( string $value )
+	function setFontColor( /*string*/ $value )
 	{
 		$this->fontColor = $value;
 
 		return $this;
 	}
 
-	function setFontSize( int $value )
+	function setFontSize( /*int*/ $value )
 	{
 		$this->fontSize = $value;
 
 		return $this;
 	}
 
-	function setFontShadow( $color, int $x = 0, int $y = 0 )
+	function setFontShadow( $color, /*int*/ $x = 0, /*int*/ $y = 0 )
 	{
 		$this->shadowColor = $color;
 		$this->shadowOffset = [ 'x' => $x, 'y' => $y ];
@@ -98,7 +106,7 @@ trait Options
 		return $this;
 	}
 
-	function setFontStroke( $color, int $size = 1 )
+	function setFontStroke( $color, /*int*/ $size = 1 )
 	{
 		$this->strokeColor = $color;
 		$this->strokeSize = $size;
@@ -106,28 +114,28 @@ trait Options
 		return $this;
 	}
 
-	function setLinePadding( int $value )
+	function setLinePadding( /*int*/ $value )
 	{
 		$this->linePadding = $value;
 
 		return $this;
 	}
 
-	function setVerticalPadding( int $value )
+	function setVerticalPadding( /*int*/ $value )
 	{
 		$this->verticalPadding = $value;
 
 		return $this;
 	}
 
-	function setHorizontalPadding( int $value )
+	function setHorizontalPadding( /*int*/ $value )
 	{
 		$this->horizontalPadding = $value;
 
 		return $this;
 	}
 
-	function setBackgroundImage( string $image, int $transparent = 0, $filter = 'none' )
+	function setBackgroundImage( /*string*/ $image, /*int*/ $transparent = 0, $filter = 'none' )
 	{
 		if( file_exists( $image )
 			|| ( filter_var( $image, FILTER_VALIDATE_URL ) && @get_headers( $image )[0] !== 'HTTP/1.0 404 Not Found' ) ) 
@@ -150,7 +158,7 @@ trait Options
 		return $this;
 	}
 
-	function setBackgroundGradient( array $colors, int $angle = 0 )
+	function setBackgroundGradient( /*array*/ $colors, /*int*/ $angle = 0 )
 	{
 		$this->backgroundColor = $colors;
 		$this->backgroundGradientAngle = $angle;
@@ -158,7 +166,7 @@ trait Options
 		return $this;
 	}
 
-	function setOverlayColor( $color, int $transparent = 40 )
+	function setOverlayColor( $color, /*int*/ $transparent = 40 )
 	{
 		$this->overlayColor = $color;
 		$this->overlayTransparent = $transparent;
@@ -166,21 +174,21 @@ trait Options
 		return $this;
 	}
 
-	function setVerticalAlignment( string $value )
+	function setVerticalAlignment( /*string*/ $value )
 	{
 		$this->verticalAlignment = $value;
 
 		return $this;
 	}
 
-	function setHorizontalAlignment( string $value )
+	function setHorizontalAlignment( /*string*/ $value )
 	{
 		$this->horizontalAlignment = $value;
 
 		return $this;
 	}
 
-	function setBorder( $color, int $size )
+	function setBorder( $color, /*int*/ $size )
 	{
 		$this->borderColor = $color;
 		$this->borderSize = $size;
@@ -188,7 +196,7 @@ trait Options
 		return $this;	
 	}
 
-	function setTextBackground( $color, int $transparent = 0 )
+	function setTextBackground( $color, /*int*/ $transparent = 0 )
 	{
 		$this->textBackgroundColor = $color;
 		$this->textBackgroundTransparent = $transparent;
@@ -196,7 +204,7 @@ trait Options
 		return $this;
 	}
 
-	function debug( bool $value )
+	function debug( /*bool*/ $value )
 	{
 		$this->debug = $value;
 

@@ -10,7 +10,6 @@ trait Utils
 	{
 		// 
 		$bbox = $this->imageTTFBBoxExtended( $size, $angle, $font, $text );
-		//$bbox = imageTTFBBox( $size, $angle, $font, $text );
 
 		//
 		$customWidth = $bbox[ 'width' ]; /*abs( $bbox[ 0 ] - $bbox[ 4 ] );*/
@@ -40,6 +39,9 @@ trait Utils
 	 */
 	protected function imageTTFBBoxExtended( $size, $angle, $fontFile, $text ) 
 	{
+		// Minimal height calculation
+		$patternBBox = imageTTFBBox( $size, $angle, $fontFile, 'AMWpq' );
+
 		/*this function extends imagettfbbox and includes within the returned array
 		the actual text width and height as well as the x and y coordinates the
 		text should be drawn from to render correctly.  This currently only works
@@ -55,16 +57,19 @@ trait Utils
 		else { $bbox[ 'width' ] = abs( $bbox[ 2 ] - $bbox[ 0 ] ); }
 	
 		// calculate y baseline
-		$bbox[ 'y' ] = abs( $bbox[ 5 ] + 1 );
+		$bbox[ 'y' ] = abs( $patternBBox[ 5 ] + 1 );
 	
 		// calculate actual text height
-		if( $bbox[ 3 ] > 0) { $bbox[ 'height' ] = abs( $bbox[ 7 ] - $bbox[ 1 ] ) - 1; }
-		else { $bbox[ 'height' ] = abs( $bbox[ 7 ] ) - abs( $bbox[ 1 ] ); }
+		if( $patternBBox[ 3 ] > 0) { $bbox[ 'height' ] = abs( $patternBBox[ 7 ] - $patternBBox[ 1 ] ) - 1; }
+		else { $bbox[ 'height' ] = abs( $patternBBox[ 7 ] ) - abs( $patternBBox[ 1 ] ); }
 	
 		return $bbox;
 	}
 
-	function imageFilledRotatedRectangle( $image, $X, $Y, $width, $height, $angle, $color )
+	/**
+	 * 
+	 */
+	protected function imageFilledRotatedRectangle( $image, $X, $Y, $width, $height, $angle, $color )
 	{
 		// First calculate $x1 and $y1. You may want to apply
 		// round() to the results of the calculations.
@@ -126,7 +131,6 @@ trait Utils
 		2,
 		$color );
 
-
 		return $image;
 	}
 
@@ -135,7 +139,6 @@ trait Utils
 	 */
 	protected function calculateSectionsHeight( )
 	{
-		// Расчитываем высоту блоков
 		$sectionsHeight = [ 
 			'all' => 0,
 			'top' => 0,
@@ -145,7 +148,7 @@ trait Utils
 		
 		foreach( $this->objectList as $value ) 
 		{
-			if( $value[ 'inline' ] )
+			if( array_get( $value, 'inline', false ) )
 			{ 
 				continue;
 			}
@@ -166,20 +169,21 @@ trait Utils
 	 */
 	protected function calculateImageSize( $image )
 	{
+		$canvasSize = $this->getSize( );
 		$width = imagesX( $image );
 		$height = imagesY( $image );
 
-		$highSide = ( $this->size[ 'width' ] > $this->size[ 'height' ] ) ? 'w' : 'h';
+		$highSide = ( $canvasSize[ 'width' ] > $canvasSize[ 'height' ] ) ? 'w' : 'h';
 		$imageHighSide = ( $width > $height ) ? 'w' : 'h';
 		
-		if( $imageHighSide == 'h' && ( $height > $this->size[ 'height' ] ) )
+		if( $imageHighSide == 'h' && ( $height > $canvasSize[ 'height' ] ) )
 		{
-			$customHeight = $this->size[ 'height' ];
+			$customHeight = $canvasSize[ 'height' ];
 			$customWidth = $width * ( $customHeight / $height );
 		}
-		else if( $imageHighSide == 'w' && ( $width > $this->size[ 'width' ] ) )
+		else if( $imageHighSide == 'w' && ( $width > $canvasSize[ 'width' ] ) )
 		{
-			$customWidth = $this->size[ 'width' ];
+			$customWidth = $canvasSize[ 'width' ];
 			$customHeight = $height * ( $customWidth / $width );
 		}
 		else
@@ -187,10 +191,6 @@ trait Utils
 			$customWidth = $width;
 			$customHeight = $height;
 		}
-
-		//
-		$customTop = ( ( $bottom + $customHeight ) > $this->size[ 'height' ] ) ? $bottom + ( $this->size[ 'height' ] - ( $bottom + $customHeight ) ) : $bottom;
-		$customLeft = ( ( $left + $customWidth ) > $this->size[ 'width' ] ) ? $left + ( $this->size[ 'width' ] - ( $left + $customWidth ) ) : $left;
 
 		//
 		return [
@@ -231,7 +231,7 @@ trait Utils
 		return imageColorAllocateAlpha( $image, $allocateColor[ 0 ], $allocateColor[ 1 ], $allocateColor[ 2 ], $transparent );
 	}
 
-		/**
+	/**
 	 * 
 	 */
 	protected function paintDebugData( $image, $sectionsHeight, $startPosition = [ ] )

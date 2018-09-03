@@ -1,4 +1,5 @@
 <?php
+	require_once '../src/Helpers.php';
 	require_once '../src/Options.php';
 	require_once '../src/Utils.php';
 	require_once '../src/Draw.php';
@@ -47,7 +48,6 @@
 						->setFontColor( '#FF5A40' )
 						->setFontStroke( '#025167' )
 						->addText( 'PosterGen' )
-						->addText( '' )
 						//
 						->setFontSize( 12 )
 						->setFontColor( '#FFC640' )
@@ -79,12 +79,10 @@
 						->setFontColor( '#FF5A40' )
 						->setFontStroke( '#025167' )
 						->addText( 'PosterGen' )
-						->addText( '' )
 						//
 						->setFontSize( 23 )
 						->setFontColor( '#FFC640' )
 						->addText( 'News and Articles poster generator' )
-						->addText( '' )
 						//
 						->setHorizontalAlignment( 'left' )
 						->setVerticalAlignment( 'bottom' )
@@ -111,23 +109,43 @@
 			 * 
 			 */
 			$poster2 = ( new \PosterGen\PosterGen( [ ] ) )
-						->setSize( 1280, 150 )
-						->setFont( __DIR__ . "/fonts/Roboto-Regular" )
-						->setFontSize( 30 )
-						->setFontColor( '#FFFFFF' )
-						->setBackgroundColor( '#FF0000' )
-						->setBackgroundImage( __DIR__ . "/backgrounds/2.jpg" )
-						->addText( 'Tech News' )
+						->setSize( 640, 640 )
+						->setBackgroundImage( __DIR__ . "/backgrounds/4.jpg" )
+						->setHorizontalAlignment( 'center' )
+						->setVerticalAlignment( 'center' )
+						->setOverlayColor( '#000000' )
+						->setBorder( 'black', 1 )
 						//
-						->setFontSize( 14 )
-						->setFontColor( '#00FFFF' )
+						->setFont( __DIR__ . "/fonts/Ge_Body" )
+						->setFontSize( 40 )
+						->setFontColor( '#FFFFFF' )
+						->addText( 'Overwatch: New Hero Brigitte' )
+						->addText( '' )
+						//
+						->setFontSize( 20 )
+						->setFontColor( '#FF5A40' )
+						->addText( 'Release Date' )
+						//
+						->setTextBackground( 'white', 0 )
 						->setHorizontalAlignment( 'left' )
 						->setVerticalAlignment( 'top' )
-						->addText( 'Category: News' )
-						->addText( 'Subcategory: Tech' );
+						->setFontSize( 32 )
+						->setFontColor( 'black' )
+						->setFontShadow( '' )
+						->setFontStroke( 'black' )
+						->addText( 'OVERWATCH' )
+						//
+						->setTextBackground( '' )
+						->setHorizontalAlignment( 'left' )
+						->setVerticalAlignment( 'bottom' )
+						->setFontSize( 14 )
+						->setFontColor( '#FFFFFF' )
+						->setFontShadow( '' )
+						->setFontStroke( 'black' )
+						->addText( 'http://news.com' );
 
 			echo $poster2->saveToBase64Image( );
-			?>
+		?>
 			
 		<br />
 
@@ -136,26 +154,31 @@
 			 * 
 			 */
 			$poster3 = ( new \PosterGen\PosterGen( [ ] ) )
-						->setSize( 1280, 720 )
-						->setBackgroundImage( __DIR__ . "/backgrounds/4.jpg" )
+						->setSize( 860, 300 )
+						->setBackgroundImage( __DIR__ . "/backgrounds/3.jpg" )
 						->setHorizontalAlignment( 'center' )
 						->setVerticalAlignment( 'center' )
-						->setFontShadow( '#333333', -2, 2 )
-						->setOverlayColor( '#FF0000' )
+						->setOverlayColor( '#000000' )
 						->setBorder( 'black', 1 )
 						//
-						->setFont( __DIR__ . "/fonts/Roboto-Regular" )
+						->setFont( __DIR__ . "/fonts/CaviarDreams_Bold" )
 						->setFontSize( 40 )
 						->setFontColor( '#FFFFFF' )
-						->addText( 'Microsoft buying GitHub' )
-						->addText( '' )
+						->addText( 'Windows 10' )
 						//
-						->setFont( __DIR__ . "/fonts/Blogger_Sans.otf" )
 						->setFontSize( 20 )
-						->setFontColor( '#00FFFF' )
-						->addText( 'The deal is concluded' )
+						->setFontColor( '#559ce4' )
+						->addText( 'Review April 2018 Update' )
 						//
-						->setTextBackground( 'black', 50 )
+						->setTextBackground( 'white', 0 )
+						->setVerticalAlignment( 'top' )
+						->setFontSize( 24 )
+						->setFontColor( 'black' )
+						->setFontShadow( '' )
+						->setFontStroke( 'black' )
+						->addText( 'News > Tech' )
+						//
+						->setTextBackground( 'black', 0 )
 						->setHorizontalAlignment( 'right' )
 						->setVerticalAlignment( 'bottom' )
 						->setFontSize( 14 )

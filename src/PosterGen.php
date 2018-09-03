@@ -7,7 +7,7 @@ class PosterGen
 	use Utils;
 	use Draw;
 
-	function __construct( array $options = [ ] )
+	function __construct( /*array*/ $options = [ ] )
 	{
 
 	}
@@ -31,18 +31,18 @@ class PosterGen
 	/**
 	 * 
 	 */
-	function addText( string $text, string $font = '', int $size = 0, string $color = '', array $values = [ ] )
+	function _addText( /*string*/ $text, /*string*/ $font = '', /*int*/ $size = 0, /*string*/ $color = '', /*array*/ $values = [ ] )
 	{
 		// Font params
-		$fontFile = ( !empty( $font ) ? $font : $this->font );
-		$fontFile .= empty( pathinfo( $fontFile )[ 'extension' ] ) ? '.ttf' : '';
-		$fontColor = ( !empty( $color ) ? $color : $this->fontColor );
-		$fontSize = ( $size > 0 ? $size : $this->fontSize );
+		$font = ( !empty( $font ) ? $font : $this->font );
+		$font .= empty( pathinfo( $font )[ 'extension' ] ) ? '.ttf' : '';
+		$color = ( !empty( $color ) ? $color : $this->fontColor );
+		$size = ( $size > 0 ? $size : $this->fontSize );
 
 		// Angle
 		$angle = array_key_exists( 'angle', $values ) ? $values[ 'angle' ] : 0;
 		$transparent = array_key_exists( 'transparent', $values ) ? $values[ 'transparent' ] : 100;
-
+		
 		// Text background
 		$background = [ 
 			'color'			=> ( array_key_exists( 'background', $values ) && array_key_exists( 'color', $values[ 'background' ] ) ) ? $values[ 'background' ][ 'color' ] : $this->textBackgroundColor,
@@ -50,20 +50,20 @@ class PosterGen
 		];
 
 		// Position values
-		$position = $values[ 'position' ];
+		$position = array_get( $values, 'position', [ ] );
 		if( empty( $position[ 'vertical-alignment' ] ) && empty( $position[ 'x' ] ) && empty( $position[ 'y' ] ) ){ $position[ 'vertical-alignment' ] = $this->verticalAlignment; };
 		if( empty( $position[ 'horizontal-alignment' ] ) && empty( $position[ 'x' ] ) && empty( $position[ 'y' ] ) ){ $position[ 'horizontal-alignment' ] = $this->horizontalAlignment; };
-
+		
 		// Calculate coordinates
-		$coordinate = $this->calculateTextCoordinates( $text, $fontSize, $position, $fontColor, $angle, $fontFile );
-
+		$coordinate = $this->calculateTextCoordinates( $text, $size, $position, $color, $angle, $font );
+		
 		//
 		$data = array_replace_recursive( [
 			'type'			=> 'text',
 			'text'			=> $text,
-			'font'			=> $fontFile,
-			'font-size'		=> $fontSize,
-			'color'			=> $fontColor,
+			'font'			=> $font,
+			'font-size'		=> $size,
+			'color'			=> $color,
 			'stroke'		=> [ 
 				'color' 	=> $this->strokeColor,
 				'size'		=> $this->strokeSize
@@ -82,6 +82,107 @@ class PosterGen
 			'transparent'	=> $transparent,
 			'background'	=> $background
 		], $values );
+		//
+		array_push( $this->objectList, $data );
+		
+		return $this;
+	}
+
+	/**
+	 * 
+	 */
+	function addText( /*string*/ $text, /*string*/ $font = '', /*int*/ $size = 0, /*string*/ $color = '', /*array*/ $values = [ ] )
+	{
+		// Font params
+		$font = ( !empty( $font ) ? $font : $this->font );
+		$font .= empty( pathinfo( $font )[ 'extension' ] ) ? '.ttf' : '';
+		$color = ( !empty( $color ) ? $color : $this->fontColor );
+		$size = ( $size > 0 ? $size : $this->fontSize );
+
+		// Angle
+		$angle = array_get( $values, 'angle', 0 );
+		$transparent = array_get( $values, 'transparent', 100 );
+
+		// Text background
+		$background = [ 
+			'color'			=> ( array_key_exists( 'background', $values ) && array_key_exists( 'color', $values[ 'background' ] ) ) ? $values[ 'background' ][ 'color' ] : $this->textBackgroundColor,
+			'transparent'	=> ( array_key_exists( 'background', $values ) && array_key_exists( 'transparent', $values[ 'background' ] ) ) ? $values[ 'background' ][ 'transparent' ] : $this->textBackgroundTransparent
+		];
+
+		// Position values
+		$position = array_get( $values, 'position', [ ] );
+		if( empty( $position[ 'vertical-alignment' ] ) && empty( $position[ 'x' ] ) && empty( $position[ 'y' ] ) ){ $position[ 'vertical-alignment' ] = $this->verticalAlignment; };
+		if( empty( $position[ 'horizontal-alignment' ] ) && empty( $position[ 'x' ] ) && empty( $position[ 'y' ] ) ){ $position[ 'horizontal-alignment' ] = $this->horizontalAlignment; };
+
+		//
+		$data = array_replace_recursive( [
+			'type'			=> 'text',
+			// 'text'			=> null,
+			'font'			=> $font,
+			'font-size'		=> $size,
+			'color'			=> $color,
+			'stroke'		=> [ 
+				'color' 	=> $this->strokeColor,
+				'size'		=> $this->strokeSize
+			],
+			// 'size'		=> [ ],
+			'position'		=> $position,
+			// 'coordinate'	=> [ ],
+			'shadow'		=> [ 
+				'color' 	=> $this->shadowColor,
+				'offset'	=> $this->shadowOffset
+			],
+			'angle'			=> $angle,
+			'transparent'	=> $transparent,
+			'background'	=> $background
+		], $values );
+
+		// 
+		$wrappedText = '';
+		$wordArray = explode( ' ', $text );
+
+		//
+		for( $i = 0; $i < count( $wordArray ); $i++ )
+		{
+			$word = $wordArray[ $i ];
+			$textBox = $this->imageTTFBBoxExtended( $size, 0, $font, $wrappedText . ' ' . $word );
+			
+			if( $textBox[ 'width' ] < $this->getSize( true )[ 'width' ] )
+			{ 
+				$wrappedText .= ( $wrappedText === '' ? '' : ' ' ) . $word; 
+			}
+			else
+			{
+				$this->addTextLine( $wrappedText, $data );
+				$wrappedText = $word;
+			}
+
+			if( $i === count( $wordArray ) - 1 ) 
+			{ 
+				$this->addTextLine( $wrappedText, $data );
+			}
+		}
+
+		return $this;
+	}
+
+	/**
+	 * 
+	 */
+	private function addTextLine( /*string*/ $text, /*array*/ $values = [ ] )
+	{
+		// Calculate coordinates
+		$coordinate = $this->calculateTextCoordinates( $text, $values[ 'font-size' ], $values[ 'position' ], $values[ 'color' ], $values[ 'angle' ], $values[ 'font' ] );
+
+		//
+		$data = array_replace_recursive( [
+			'text'			=> $text,
+			'size'			=> [
+				'width'		=> $coordinate[ 'width' ],
+				'height'	=> $coordinate[ 'height' ],
+			],
+			'coordinate'	=> $coordinate,
+		], $values );
 
 		//
 		array_push( $this->objectList, $data );
@@ -92,7 +193,7 @@ class PosterGen
 	/**
 	 * 
 	 */
-	function addImage( string $image, array $values = [ ] )
+	function addImage( /*string*/ $image, /*array*/ $values = [ ] )
 	{
 		if( !file_exists( $image ) )
 		{
@@ -103,19 +204,19 @@ class PosterGen
 		$customImage = imageCreateFromString( file_get_contents( $image ) );
 
 		// Angle
-		$angle = array_key_exists( 'angle', $values ) ? $values[ 'angle' ] : 0;
-		$inline = array_key_exists( 'inline', $values ) ? $values[ 'inline' ] : false;
-		$transparent = array_key_exists( 'transparent', $values ) ? $values[ 'transparent' ] : 100;
+		$angle = array_get( $values, 'angle', 0 );
+		$inline = array_get( $values, 'inline', false );
+		$transparent = array_get( $values, 'transparent', 100 );
 
 		// Image size
 		$size = $this->calculateImageSize( $customImage );
 
 		// Position values
-		$position = $values[ 'position' ];
+		$position = array_get( $values, 'position', [ ] );
 		if( empty( $position[ 'vertical-alignment' ] ) && empty( $position[ 'x' ] ) && empty( $position[ 'y' ] ) ){ $position[ 'vertical-alignment' ] = $this->verticalAlignment; };
 		if( empty( $position[ 'horizontal-alignment' ] ) && empty( $position[ 'x' ] ) && empty( $position[ 'y' ] ) ){ $position[ 'horizontal-alignment' ] = $this->horizontalAlignment; };		
-		$x = empty( $position[ 'x' ] ) ? $position[ 'x' ] : 0;
-		$y = empty( $position[ 'y' ] ) ? $position[ 'y' ] : 0;
+		$x = array_get( $position, 'x', 0 );
+		$y = array_get( $position, 'y', 0 );
 
 		//
 		$data = array_replace_recursive( [
@@ -143,7 +244,7 @@ class PosterGen
 	/**
 	 * 
 	 */
-	function save( string $format = 'png' )
+	function save( /*string*/ $format = 'png' )
 	{
 		header( "Content-type: image/{$format}" );
 
@@ -154,15 +255,15 @@ class PosterGen
 	/**
 	 * 
 	 */
-	function saveToBase64( string $format = 'png' )
+	function saveToBase64( /*string*/ $format = 'png' )
 	{
-		return 'data:image/png;base64,' . base64_encode( $this->print( ) );
+		return 'data:image/png;base64,' . base64_encode( $this->output( ) );
 	}
 
 	/**
 	 * 
 	 */
-	function saveToBase64Image( string $format = 'png' )
+	function saveToBase64Image( /*string*/ $format = 'png' )
 	{
 		return '<img src="' . $this->saveToBase64( ) . '"/>';
 	}
@@ -170,7 +271,7 @@ class PosterGen
 	/**
 	 * 
 	 */
-	function print( string $format = 'png' )
+	function output( /*string*/ $format = 'png' )
 	{
 		ob_start( );
 

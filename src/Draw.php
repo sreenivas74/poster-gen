@@ -98,7 +98,7 @@ trait Draw
 	/**
 	 * 
 	 */
-	function generate( string $format = 'png', $fileName = null )
+	function generate( /*string*/ $format = 'png', $fileName = null )
 	{
 		//
 		$image = imageCreateTrueColor( $this->size[ 'width' ], $this->size[ 'height' ] );
@@ -168,8 +168,8 @@ trait Draw
 				else
 				{
 					$top = $currentBottom[ $verticalAlignment ] - $this->linePadding;
-					if( $position[ 'vertical-alignment' ] === 'center' ) { $top += ( $this->size[ 'height' ] - $size[ 'height' ] ) / 2.0; }
-					else if( $position[ 'vertical-alignment' ] === 'bottom' ) { $top += ( $this->size[ 'height' ] - $size[ 'height' ] ) - $this->verticalPadding; }
+					if( $value[ 'position' ][ 'vertical-alignment' ] === 'center' ) { $top += ( $this->size[ 'height' ] - $value[ 'size' ][ 'height' ] ) / 2.0; }
+					else if( $value[ 'position' ][ 'vertical-alignment' ] === 'bottom' ) { $top += ( $this->size[ 'height' ] - $value[ 'size' ][ 'height' ] ) - $this->verticalPadding; }
 					else { $top += $this->verticalPadding; }
 
 					if( !$value[ 'inline' ] )
@@ -224,8 +224,10 @@ trait Draw
 					{
 						$this->strokeText( $image, 
 											$value, 
-											[ 'x' => $left, 
-											'y' => $top ], 
+											[ 
+												'x' => $left, 
+												'y' => $top 
+											], 
 											$stroke[ 'color' ], 
 											$stroke[ 'size' ] );
 					}
@@ -235,8 +237,10 @@ trait Draw
 					{
 						$this->drawInternal( $image, 
 											$value,
-											[ 'x' => $left + $shadow[ 'offset' ][ 'x' ], 
-											'y' => $top + $shadow[ 'offset' ][ 'y' ] ], 
+											[ 
+												'x' => $left + array_get( $shadow, 'offset.x', 0 ), 
+												'y' => $top + array_get( $shadow, 'offset.y', 0 ) 
+											], 
 											$shadow[ 'color' ] );
 					}
 
@@ -245,14 +249,15 @@ trait Draw
 					{
 						$this->drawBackground( $image, 
 												[ 
-												'x' => $left,
-												'x1' => $left, 
-												'x2' => $left + $value[ 'size' ][ 'width' ], 
-												'y' => $top, 
-												'y1' => $top - $value[ 'coordinate' ][ 'y' ], 
-												'y2' => $top - $value[ 'size' ][ 'height' ],
-												'height' => $value[ 'size' ][ 'height' ],
-												'width' => $value[ 'size' ][ 'width' ] ], 
+													'x' => $left,
+													'x1' => $left, 
+													'x2' => $left + $value[ 'size' ][ 'width' ], 
+													'y' => $top, 
+													'y1' => $top - $value[ 'coordinate' ][ 'y' ], 
+													'y2' => $top - $value[ 'size' ][ 'height' ],
+													'height' => $value[ 'size' ][ 'height' ],
+													'width' => $value[ 'size' ][ 'width' ] 
+												], 
 												$value[ 'background' ][ 'color' ], 
 												$value[ 'background' ][ 'transparent'],
 												$value[ 'angle' ] );
