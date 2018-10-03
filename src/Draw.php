@@ -103,7 +103,9 @@ trait Draw
 		//
 		$image = imageCreateTrueColor( $this->size[ 'width' ], $this->size[ 'height' ] );
 		imageLayerEffect( $image, IMG_EFFECT_NORMAL );
-		imageAntialias( $image, True );
+
+		// Check for PHP < 7.2
+		if( function_exists( 'imageAntialias' )  ) { imageAntialias( $image, True ); }
 
 		// Colors
 		$bgColor = $this->createColor( $image, $this->backgroundColor );
