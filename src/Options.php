@@ -15,8 +15,7 @@ trait Options
 	protected $backgroundTransparent = 100;
 	protected $backgroundColor = '#FFFFFF';
 
-	protected $backgroundGradient = [ '#FFFFFF', '#000000' ];
-	protected $backgroundGradientAngle = 0;
+	protected $backgroundGradient = [ ]; // 4 colors ( 1 corner = 1 color )
 
 	protected $overlayColor = '';
 	protected $overlayTransparent = 100;
@@ -158,10 +157,9 @@ trait Options
 		return $this;
 	}
 
-	function setBackgroundGradient( /*array*/ $colors, /*int*/ $angle = 0 )
+	function setBackgroundGradient( /*array*/ $colors )
 	{
-		$this->backgroundColor = $colors;
-		$this->backgroundGradientAngle = $angle;
+		$this->backgroundGradient = $colors;
 
 		return $this;
 	}

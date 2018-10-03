@@ -31,66 +31,6 @@ class PosterGen
 	/**
 	 * 
 	 */
-	function _addText( /*string*/ $text, /*string*/ $font = '', /*int*/ $size = 0, /*string*/ $color = '', /*array*/ $values = [ ] )
-	{
-		// Font params
-		$font = ( !empty( $font ) ? $font : $this->font );
-		$font .= empty( pathinfo( $font )[ 'extension' ] ) ? '.ttf' : '';
-		$color = ( !empty( $color ) ? $color : $this->fontColor );
-		$size = ( $size > 0 ? $size : $this->fontSize );
-
-		// Angle
-		$angle = array_key_exists( 'angle', $values ) ? $values[ 'angle' ] : 0;
-		$transparent = array_key_exists( 'transparent', $values ) ? $values[ 'transparent' ] : 100;
-		
-		// Text background
-		$background = [ 
-			'color'			=> ( array_key_exists( 'background', $values ) && array_key_exists( 'color', $values[ 'background' ] ) ) ? $values[ 'background' ][ 'color' ] : $this->textBackgroundColor,
-			'transparent'	=> ( array_key_exists( 'background', $values ) && array_key_exists( 'transparent', $values[ 'background' ] ) ) ? $values[ 'background' ][ 'transparent' ] : $this->textBackgroundTransparent
-		];
-
-		// Position values
-		$position = array_get( $values, 'position', [ ] );
-		if( empty( $position[ 'vertical-alignment' ] ) && empty( $position[ 'x' ] ) && empty( $position[ 'y' ] ) ){ $position[ 'vertical-alignment' ] = $this->verticalAlignment; };
-		if( empty( $position[ 'horizontal-alignment' ] ) && empty( $position[ 'x' ] ) && empty( $position[ 'y' ] ) ){ $position[ 'horizontal-alignment' ] = $this->horizontalAlignment; };
-		
-		// Calculate coordinates
-		$coordinate = $this->calculateTextCoordinates( $text, $size, $position, $color, $angle, $font );
-		
-		//
-		$data = array_replace_recursive( [
-			'type'			=> 'text',
-			'text'			=> $text,
-			'font'			=> $font,
-			'font-size'		=> $size,
-			'color'			=> $color,
-			'stroke'		=> [ 
-				'color' 	=> $this->strokeColor,
-				'size'		=> $this->strokeSize
-			],
-			'size'			=> [
-				'width'		=> $coordinate[ 'width' ],
-				'height'	=> $coordinate[ 'height' ],
-			],
-			'position'		=> $position,
-			'coordinate'	=> $coordinate,
-			'shadow'		=> [ 
-				'color' 	=> $this->shadowColor,
-				'offset'	=> $this->shadowOffset
-			],
-			'angle'			=> $angle,
-			'transparent'	=> $transparent,
-			'background'	=> $background
-		], $values );
-		//
-		array_push( $this->objectList, $data );
-		
-		return $this;
-	}
-
-	/**
-	 * 
-	 */
 	function addText( /*string*/ $text, /*string*/ $font = '', /*int*/ $size = 0, /*string*/ $color = '', /*array*/ $values = [ ] )
 	{
 		// Font params
@@ -138,28 +78,34 @@ class PosterGen
 		], $values );
 
 		// 
-		$wrappedText = '';
-		$wordArray = explode( ' ', $text );
+		$linesArray = explode( "\r\n", $text );
 
 		//
-		for( $i = 0; $i < count( $wordArray ); $i++ )
+		for( $l = 0; $l < count( $linesArray ); $l++ )
 		{
-			$word = $wordArray[ $i ];
-			$textBox = $this->imageTTFBBoxExtended( $size, 0, $font, $wrappedText . ' ' . $word );
-			
-			if( $textBox[ 'width' ] < $this->getSize( true )[ 'width' ] )
-			{ 
-				$wrappedText .= ( $wrappedText === '' ? '' : ' ' ) . $word; 
-			}
-			else
-			{
-				$this->addTextLine( $wrappedText, $data );
-				$wrappedText = $word;
-			}
+			$wrappedText = '';
+			$wordArray = explode( ' ', $linesArray[ $l ] );
 
-			if( $i === count( $wordArray ) - 1 ) 
-			{ 
-				$this->addTextLine( $wrappedText, $data );
+			//
+			for( $i = 0; $i < count( $wordArray ); $i++ )
+			{
+				$word = $wordArray[ $i ];
+				$textBox = $this->imageTTFBBoxExtended( $size, 0, $font, $wrappedText . ' ' . $word );
+				
+				if( $textBox[ 'width' ] < $this->getSize( true )[ 'width' ] )
+				{ 
+					$wrappedText .= ( $wrappedText === '' ? '' : ' ' ) . $word; 
+				}
+				else
+				{
+					$this->addTextLine( $wrappedText, $data );
+					$wrappedText = $word;
+				}
+
+				if( $i === count( $wordArray ) - 1 ) 
+				{ 
+					$this->addTextLine( $wrappedText, $data );
+				}
 			}
 		}
 

@@ -106,19 +106,19 @@ trait Utils
 		$color );
 		*/
 
-		// Верхний левый
+		// Top-Left
 		$x1 = $X - ( $width * cos( $angle ) / 2 );
 		$y1 = $Y - ( $height * sin( $angle ) );
 
-		// Нижний левый
+		// Bottom-Left
 		$x2 = $x1 + 10;
 		$y2 = ( -$height * sin( $angle ) / 2 ) + $Y;
 
-		// Перхний правый
+		// Top-Right
 		$x3 = ( -$width * cos( $angle ) / 2 ) + $X;
 		$y3 = ( -$height * sin( $angle ) / 2 ) + $Y;
 
-		// Нижний правый
+		// Bottom-Right
 		$x4 = ( -$width * cos( $angle ) / 2 ) + $X;
 		$y4 = ( -$height * sin( $angle ) / 2 ) + $Y;	
 
@@ -132,6 +132,49 @@ trait Utils
 		$color );
 
 		return $image;
+	}
+
+	/**
+	 * 
+	 */
+	protected function imageFillGradient( $image, $colors = [ ] )
+	{
+		$width = imagesX( $image );
+		$height = imagesY( $image );
+	
+		// Convert hex-values to rgb
+		for( $i = 0; $i <= 3; $i++ )
+		{
+			$colors[ $i ] = [
+				hexdec( substr( $colors[ $i ], 1, 2 ) ),
+				hexdec( substr( $colors[ $i ], 3, 2 ) ),
+				hexdec( substr( $colors[ $i ], 5, 2 ) )
+			];
+		}
+	
+		$rgb = $colors[0]; // start with top left color
+
+		for( $x = 0; $x <= $width; $x++ ) 
+		{
+			for( $y = 0 ; $y <= $height; $y++ ) 
+			{
+				// set pixel color 
+				$col = imageColorAllocate( $image, $rgb[0], $rgb[1], $rgb[2] );
+				imageSetPixel( $image, $x - 1, $y - 1, $col );
+
+				// calculate new color  
+				for( $i = 0; $i <= 2; $i++ ) 
+				{
+					$rgb[ $i ] =
+						$colors[ 0 ][ $i ] * ( ( $width - $x ) * ( $height - $y ) / ( $width * $height ) ) +
+						$colors[ 1 ][ $i ] * ( $x * ( $height - $y ) / ( $width * $height ) ) +
+						$colors[ 2 ][ $i ] * ( ( $width - $x ) * $y  / ( $width * $height ) ) +
+						$colors[ 3 ][ $i ] * ( $x * $y / ( $width * $height ) );
+				}
+			}
+		}
+
+		// return $image;
 	}
 
 	/**
@@ -153,12 +196,12 @@ trait Utils
 				continue;
 			}
 
-			$h = $value[ 'size' ][ 'height' ] + $this->linePadding;
+			$height = $value[ 'size' ][ 'height' ] + $this->linePadding;
 
-			$sectionsHeight[ 'all' ] += $h;
-			$sectionsHeight[ 'top' ] += ( empty( $value[ 'position' ][ 'y' ] ) && $value[ 'position' ][ 'vertical-alignment' ] === 'top' ) ? $h : 0;
-			$sectionsHeight[ 'bottom' ] += ( empty( $value[ 'position' ][ 'y' ] ) && $value[ 'position' ][ 'vertical-alignment' ] === 'bottom' ) ? $h : 0;
-			$sectionsHeight[ 'center' ] += ( empty( $value[ 'position' ][ 'y' ] ) && $value[ 'position' ][ 'vertical-alignment' ] === 'center' ) ? $h : 0;
+			$sectionsHeight[ 'all' ] += $height;
+			$sectionsHeight[ 'top' ] += ( empty( $value[ 'position' ][ 'y' ] ) && $value[ 'position' ][ 'vertical-alignment' ] === 'top' ) ? $height : 0;
+			$sectionsHeight[ 'bottom' ] += ( empty( $value[ 'position' ][ 'y' ] ) && $value[ 'position' ][ 'vertical-alignment' ] === 'bottom' ) ? $height : 0;
+			$sectionsHeight[ 'center' ] += ( empty( $value[ 'position' ][ 'y' ] ) && $value[ 'position' ][ 'vertical-alignment' ] === 'center' ) ? $height : 0;
 		}
 
 		return $sectionsHeight;

@@ -113,6 +113,12 @@ trait Draw
 		//
 		imageFillToBorder( $image, 0, 0, $bgColor, $bgColor );
 
+		// Bacground Gradient
+		if( is_array( $this->backgroundGradient ) && count( $this->backgroundGradient ) > 0 )
+		{
+			$this->imageFillGradient( $image, $this->backgroundGradient );
+		}
+
 		// Background Image
 		if( !empty( $this->backgroundImage ) )
 		{
@@ -143,7 +149,7 @@ trait Draw
 			$this->paintDebugData( $image, $sectionsHeight, $currentBottom );
 		}
 
-		// Расчитываем стартовую позицию
+		// Start position
 		foreach( $this->objectList as $value )
 		{
 			// 
@@ -269,8 +275,10 @@ trait Draw
 				// Draw text
 				$this->drawInternal( $image,
 									$value, 
-									[ 'x' => $left, 
-									'y' => $top ], 
+									[ 
+										'x' => $left, 
+										'y' => $top
+									], 
 									$value[ 'color' ] );
 			}
 		}

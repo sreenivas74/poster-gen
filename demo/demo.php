@@ -51,8 +51,8 @@
 						//
 						->setFontSize( 12 )
 						->setFontColor( '#FFC640' )
-						->addText( "Poster" )
-						->addText( "generator" );
+						//->addText( 'Poster' )
+						->addText( 'generator' );
 
 			echo $poster0->saveToBase64Image( );
 		?>
@@ -242,6 +242,22 @@
 						->addText( 'Smiles improve health' );
 
 			echo $poster5->saveToBase64Image( );
+		?>
+
+		<?php
+			/**
+			 * 
+			 */
+			$poster6 = ( new \PosterGen\PosterGen( [ ] ) )
+						->setSize( 350, 200 )
+						->setBackgroundGradient( [ '#FF5A40', '#007B25', '#FFC640' ] )
+						->setFontColor( '#FFFFFF' )
+						->setFontSize( 24 )
+						->setFontStroke( '#007B25' )
+						->setFont( __DIR__ . "/fonts/ComicRelief" )
+						->addText( "Party on\r\nLasVegas" );
+
+			echo $poster6->saveToBase64Image( );
 		?>
 	</body>
 </html>
