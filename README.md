@@ -18,6 +18,8 @@ Use for:
 
 ![PosterGen](https://github.com/ange007/poster-gen/blob/master/examples/4.png)
 
+![PosterGen](https://github.com/ange007/poster-gen/blob/master/examples/5.png)
+
 ## Dependencies
 * PHP >= 5.6
 * GD
