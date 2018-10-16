@@ -7,7 +7,7 @@ class PosterGen
 	use Utils;
 	use Draw;
 
-	function __construct( /*array*/ $options = [ ] )
+	function __construct( array $options = [ ] )
 	{
 
 	}
@@ -31,13 +31,14 @@ class PosterGen
 	/**
 	 * 
 	 */
-	function addText( /*string*/ $text, /*string*/ $font = '', /*int*/ $size = 0, /*string*/ $color = '', /*array*/ $values = [ ] )
+	function addText( /*string*/ $text, /*string*/ $font = '', /*int*/ $size = 0, /*string*/ $color = '', array $style = [ ], array $values = [ ] )
 	{
 		// Font params
 		$font = ( !empty( $font ) ? $font : $this->font );
 		$font .= empty( pathinfo( $font )[ 'extension' ] ) ? '.ttf' : '';
 		$color = ( !empty( $color ) ? $color : $this->fontColor );
 		$size = ( $size > 0 ? $size : $this->fontSize );
+		$style = ( !empty( $style ) ? $style : $this->fontStyle );
 
 		// Angle
 		$angle = array_get( $values, 'angle', 0 );
@@ -61,6 +62,7 @@ class PosterGen
 			'font'			=> $font,
 			'font-size'		=> $size,
 			'color'			=> $color,
+			'style'			=> $style,
 			'stroke'		=> [ 
 				'color' 	=> $this->strokeColor,
 				'size'		=> $this->strokeSize
@@ -115,7 +117,7 @@ class PosterGen
 	/**
 	 * 
 	 */
-	private function addTextLine( /*string*/ $text, /*array*/ $values = [ ] )
+	private function addTextLine( /*string*/ $text, array $values = [ ] )
 	{
 		// Calculate coordinates
 		$coordinate = $this->calculateTextCoordinates( $text, $values[ 'font-size' ], $values[ 'position' ], $values[ 'color' ], $values[ 'angle' ], $values[ 'font' ] );
@@ -139,7 +141,7 @@ class PosterGen
 	/**
 	 * 
 	 */
-	function addImage( /*string*/ $image, /*array*/ $values = [ ] )
+	function addImage( /*string*/ $image, array $values = [ ] )
 	{
 		if( !file_exists( $image ) )
 		{
@@ -185,6 +187,20 @@ class PosterGen
 		array_push( $this->objectList, $data );
 		
 		return $this;
+	}
+
+	/**
+	 * 
+	 */
+	function addSeparator( /*string*/ $color = '', /* string */ $align = 'center' )
+	{
+		$values = [
+			'position' => [
+				'horizontal-alignment' => $align
+			]
+		];
+
+		return $this->addText( '-', '', 0, $color, [ ], $values );
 	}
 
 	/**

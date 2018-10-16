@@ -51,7 +51,7 @@
 						//
 						->setFontSize( 12 )
 						->setFontColor( '#FFC640' )
-						//->addText( 'Poster' )
+						->addText( 'Poster' )
 						->addText( 'generator' );
 
 			echo $poster0->saveToBase64Image( );
@@ -82,7 +82,9 @@
 						//
 						->setFontSize( 23 )
 						->setFontColor( '#FFC640' )
-						->addText( 'News and Articles poster generator' )
+						->addText( 'Poster generator for all' )
+						//
+						->addSeparator( '', 'center' )
 						//
 						->setHorizontalAlignment( 'left' )
 						->setVerticalAlignment( 'bottom' )
@@ -97,7 +99,7 @@
 						->setVerticalAlignment( 'bottom' )
 						->setFontSize( 14 )
 						->setFontColor( '#FFFFFF' )
-						->addText( 'best for you!', '', 0, '', [] );
+						->addText( 'best for you!', '', 0, '', [ ], [ ] );
 
 			echo $poster1->saveToBase64Image( );
 		?>
@@ -250,7 +252,7 @@
 			 */
 			$poster6 = ( new \PosterGen\PosterGen( [ ] ) )
 						->setSize( 350, 200 )
-						->setBackgroundGradient( [ '#FF5A40', '#007B25', '#FFC640' ] )
+						->setBackgroundGradient( [ '#FF5A40', '#007B25', '#FFC640', '#007B25' ] )
 						->setFontColor( '#FFFFFF' )
 						->setFontSize( 24 )
 						->setFontStroke( '#007B25' )

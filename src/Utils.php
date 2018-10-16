@@ -151,8 +151,9 @@ trait Utils
 				hexdec( substr( $colors[ $i ], 5, 2 ) )
 			];
 		}
-	
-		$rgb = $colors[0]; // start with top left color
+
+		// Start with top left color
+		$rgb = $colors[ 0 ]; 
 
 		for( $x = 0; $x <= $width; $x++ ) 
 		{
@@ -174,7 +175,7 @@ trait Utils
 			}
 		}
 
-		// return $image;
+		return $image;
 	}
 
 	/**

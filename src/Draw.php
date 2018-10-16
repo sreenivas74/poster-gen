@@ -8,7 +8,7 @@ trait Draw
 	 */
 	protected function strokeText( $image, $values, $position, $color, $size )
 	{
-		if( $size <= 0 || $color === '' ) { return; }
+		if( $size <= 0 || $color === '' ) { return $this; }
 
 		$x = $position[ 'x' ]; 
 		$y = $position[ 'y' ];
@@ -20,6 +20,23 @@ trait Draw
 				$this->drawInternal( $image, $values, [ 'x' => $c1, 'y' => $c2 ], $color );
 			}
 		}
+
+		return $this;
+	}
+
+	/**
+	 * @todo: https://stackoverflow.com/questions/14741622/underline-text-using-imagettftext
+	 */
+	protected function drawLine( $image, $position, $color )
+	{
+		$colorAllocate = $this->createColor( $image, $color );
+
+		imageLine( $image, 
+					$position[ 'x1' ], 
+					$position[ 'y1' ], 
+					$position[ 'x2' ], 
+					$position[ 'y2' ], 
+					$colorAllocate );
 
 		return $this;
 	}
@@ -113,7 +130,7 @@ trait Draw
 		//
 		imageFillToBorder( $image, 0, 0, $bgColor, $bgColor );
 
-		// Bacground Gradient
+		// Background Gradient
 		if( is_array( $this->backgroundGradient ) && count( $this->backgroundGradient ) > 0 )
 		{
 			$this->imageFillGradient( $image, $this->backgroundGradient );
@@ -225,51 +242,88 @@ trait Draw
 				$shadow = $value[ 'shadow' ];
 
 				//
-				if( !empty( $value[ 'text' ] ) )
+				if( empty( $value[ 'text' ] ) ) 
 				{
-					// Stroke text
-					if( is_array( $stroke ) && count( $stroke ) > 0  )
-					{
-						$this->strokeText( $image, 
-											$value, 
-											[ 
-												'x' => $left, 
-												'y' => $top 
-											], 
-											$stroke[ 'color' ], 
-											$stroke[ 'size' ] );
-					}
+					continue;
+				}
 
-					// Shadow
-					if( is_array( $shadow ) && count( $shadow ) > 0 )
-					{
-						$this->drawInternal( $image, 
-											$value,
-											[ 
-												'x' => $left + array_get( $shadow, 'offset.x', 0 ), 
-												'y' => $top + array_get( $shadow, 'offset.y', 0 ) 
-											], 
-											$shadow[ 'color' ] );
-					}
+				//
+				if( $value[ 'text' ] === '-' )
+				{
+					$separatorWidth = $this->size[ 'width' ] / 2;
+					// $separatorLeft = ( $this->size[ 'width' ] - $separatorWidth ) / 2;
 
-					// Background
-					if( is_array( $value[ 'background' ] ) && !empty( $value[ 'background' ][ 'color' ] ) )
-					{
-						$this->drawBackground( $image, 
-												[ 
-													'x' => $left,
-													'x1' => $left, 
-													'x2' => $left + $value[ 'size' ][ 'width' ], 
-													'y' => $top, 
-													'y1' => $top - $value[ 'coordinate' ][ 'y' ], 
-													'y2' => $top - $value[ 'size' ][ 'height' ],
-													'height' => $value[ 'size' ][ 'height' ],
-													'width' => $value[ 'size' ][ 'width' ] 
-												], 
-												$value[ 'background' ][ 'color' ], 
-												$value[ 'background' ][ 'transparent'],
-												$value[ 'angle' ] );
-					}
+					if( $horizontalAlignment === 'center' ) { $separatorLeft = ( $this->size[ 'width' ] - $separatorWidth ) / 2; }
+					else if( $horizontalAlignment === 'right' ) { $separatorLeft = ( $this->size[ 'width' ] - $separatorWidth ) - $this->horizontalPadding; }
+					else { $separatorLeft = $this->horizontalPadding; }
+
+					$this->drawLine( $image, 
+									[
+										'x1' => $separatorLeft, 
+										'x2' => $separatorLeft + $separatorWidth, 
+										'y1' => $top - $value[ 'coordinate' ][ 'y' ] - ( $value[ 'size' ][ 'height' ] / 2 ),
+										'y2' => $top - $value[ 'coordinate' ][ 'y' ] - ( $value[ 'size' ][ 'height' ] / 2 ),
+									],
+									$value[ 'color' ] );
+
+					continue;
+				}
+			
+				// Underline text
+				if( is_array( $value[ 'style' ] ) && in_array( 'underline', $value[ 'style' ] ) )
+				{
+					$this->drawLine( $image, 
+									[
+										'x1' => $left, 
+										'x2' => $left + $value[ 'size' ][ 'width' ], 
+										'y1' => $top - $value[ 'coordinate' ][ 'y' ] + 2, 
+										'y2' => $top - $value[ 'coordinate' ][ 'y' ] + 2
+									],
+									$value[ 'color' ] );
+				}
+
+				// Stroke text
+				if( is_array( $stroke ) && count( $stroke ) > 0  )
+				{
+					$this->strokeText( $image, 
+										$value, 
+										[ 
+											'x' => $left, 
+											'y' => $top 
+										], 
+										$stroke[ 'color' ], 
+										$stroke[ 'size' ] );
+				}
+
+				// Shadow
+				if( is_array( $shadow ) && count( $shadow ) > 0 )
+				{
+					$this->drawInternal( $image, 
+										$value,
+										[ 
+											'x' => $left + array_get( $shadow, 'offset.x', 0 ), 
+											'y' => $top + array_get( $shadow, 'offset.y', 0 ) 
+										], 
+										$shadow[ 'color' ] );
+				}
+
+				// Background
+				if( is_array( $value[ 'background' ] ) && !empty( $value[ 'background' ][ 'color' ] ) )
+				{
+					$this->drawBackground( $image, 
+											[ 
+												'x'	=> $left,
+												'x1' => $left, 
+												'x2' => $left + $value[ 'size' ][ 'width' ], 
+												'y' => $top, 
+												'y1' => $top - $value[ 'coordinate' ][ 'y' ], 
+												'y2' => $top - $value[ 'size' ][ 'height' ],
+												'height' => $value[ 'size' ][ 'height' ],
+												'width' => $value[ 'size' ][ 'width' ] 
+											], 
+											$value[ 'background' ][ 'color' ], 
+											$value[ 'background' ][ 'transparent'],
+											$value[ 'angle' ] );
 				}
 
 				// Draw text
@@ -280,6 +334,19 @@ trait Draw
 										'y' => $top
 									], 
 									$value[ 'color' ] );
+
+				// Strike text
+				if( is_array( $value[ 'style' ] ) && in_array( 'strike', $value[ 'style' ] ) )
+				{
+					$this->drawLine( $image,
+									[
+										'x1' => $left,
+										'x2' => $left + $value[ 'size' ][ 'width' ],
+										'y1' => $top - $value[ 'coordinate' ][ 'y' ] - ( $value[ 'size' ][ 'height' ] / 2 ),
+										'y2' => $top - $value[ 'coordinate' ][ 'y' ] - ( $value[ 'size' ][ 'height' ] / 2 ),
+									],
+									$value[ 'color' ] );
+				}
 			}
 		}
 

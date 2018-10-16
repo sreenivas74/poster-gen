@@ -9,6 +9,7 @@ trait Options
 	protected $font = '';
 	protected $fontColor = '#000000';
 	protected $fontSize = 14;
+	protected $fontStyle = [ ];
 	protected $linePadding = 8;
 
 	protected $backgroundImage = '';
@@ -40,7 +41,7 @@ trait Options
 
 	protected $objectList = [ ];
 
-	function __construct( /*array*/ $options = [ ] )
+	function __construct( array $options = [ ] )
 	{
 
 	}
@@ -97,6 +98,13 @@ trait Options
 		return $this;
 	}
 
+	function setFontStyle( array $value )
+	{
+		$this->fontStyle = $value;
+
+		return $this;
+	}
+
 	function setFontShadow( $color, /*int*/ $x = 0, /*int*/ $y = 0 )
 	{
 		$this->shadowColor = $color;
@@ -134,7 +142,7 @@ trait Options
 		return $this;
 	}
 
-	function setBackgroundImage( /*string*/ $image, /*int*/ $transparent = 0, $filter = 'none' )
+	function setBackgroundImage( /*string*/ $image, /*int*/ $transparent = 0 )
 	{
 		if( file_exists( $image )
 			|| ( filter_var( $image, FILTER_VALIDATE_URL ) && @get_headers( $image )[0] !== 'HTTP/1.0 404 Not Found' ) ) 
@@ -157,7 +165,7 @@ trait Options
 		return $this;
 	}
 
-	function setBackgroundGradient( /*array*/ $colors )
+	function setBackgroundGradient( array $colors )
 	{
 		$this->backgroundGradient = $colors;
 
